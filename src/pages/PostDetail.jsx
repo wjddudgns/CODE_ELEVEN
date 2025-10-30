@@ -8,6 +8,22 @@ export default function PostDetail() {
   const { posts, deletePost, addComment, deleteComment } = usePostsStore()
   const post = posts.find(p => p.id === postId)
   const navigate = useNavigate()
+  // ✅ 추천 기능 상태 관리
+  const { likePost } = usePostsStore()
+  const [liked, setLiked] = useState(() => {
+    const likedPosts = JSON.parse(localStorage.getItem('likedPosts') || '[]')
+    return likedPosts.includes(postId)
+  })
+
+  const handleLike = () => {
+    if (liked) return
+    likePost(postId)
+    setLiked(true)
+    const likedPosts = JSON.parse(localStorage.getItem('likedPosts') || '[]')
+    likedPosts.push(postId)
+    localStorage.setItem('likedPosts', JSON.stringify(likedPosts))
+  }
+
 
   const [deletePwd, setDeletePwd] = useState('')
   const [editPwd, setEditPwd] = useState('')
@@ -64,6 +80,18 @@ export default function PostDetail() {
       <h1>{post.title}</h1>
       <div className="meta">익명 | {new Date(post.createdAt).toLocaleString()}</div>
       <p className="content">{post.content}</p>
+{/* ✅ 추천 버튼 */}
+<div className="like-section">
+  <button
+    className={`like-btn ${liked ? 'liked' : ''}`}
+    onClick={handleLike}
+    disabled={liked}
+  >
+    {liked ? '👍 추천됨' : '👍 추천하기'}
+  </button>
+  <span className="like-count">추천 수: {post.likes || 0}</span>
+</div>
+
 
       {/* 수정/삭제 버튼 */}
       <div className="post-actions">
