@@ -1,4 +1,4 @@
-import { useAuthStore } from '../../stores/authStore';
+import { useAuthStore } from '../lib/store';
 
 const Header = () => {
   const { user, logout } = useAuthStore();

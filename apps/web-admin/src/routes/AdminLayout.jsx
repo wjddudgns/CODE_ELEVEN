@@ -1,5 +1,5 @@
 import { Link, useLocation } from 'react-router-dom';
-import Header from './Header';
+import Header from '../components/Header';
 
 const AdminLayout = ({ children }) => {
   const location = useLocation();

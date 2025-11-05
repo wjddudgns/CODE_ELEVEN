@@ -1,25 +1,23 @@
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
-import ProtectedRoute from './components/auth/ProtectedRoute';
-import AdminLayout from './components/layout/AdminLayout';
-import Login from './pages/Login';
-import Dashboard from './pages/Dashboard';
-import PostList from './pages/PostList';
+import ProtectedRoute from './guards/ProtectedRoute';
+import AdminLayout from './routes/AdminLayout';
+import AdminLogin from './routes/AdminLogin';
+import AdminDashboard from './routes/AdminDashboard';
+import AdminPosts from './routes/AdminPosts';
+import PostEditor from './routes/PostEditor';
 import './App.css';
 
 function App() {
   return (
     <Router>
       <Routes>
-        {/* Redirect root to admin dashboard */}
         <Route path="/" element={<Navigate to="/admin" replace />} />
-
-        {/* Admin routes */}
-        <Route path="/admin/login" element={<Login />} />
+        <Route path="/admin/login" element={<AdminLogin />} />
 
         <Route path="/admin" element={
           <ProtectedRoute>
             <AdminLayout>
-              <Dashboard />
+              <AdminDashboard />
             </AdminLayout>
           </ProtectedRoute>
         } />
@@ -27,12 +25,29 @@ function App() {
         <Route path="/admin/posts" element={
           <ProtectedRoute>
             <AdminLayout>
-              <PostList />
+              <AdminPosts />
             </AdminLayout>
           </ProtectedRoute>
         } />
 
-        {/* Add more admin routes here as needed */}
+        {/* 新增编辑器路由 */}
+        <Route path="/admin/posts/new" element={
+          <ProtectedRoute>
+            <AdminLayout>
+              <PostEditor />
+            </AdminLayout>
+          </ProtectedRoute>
+        } />
+
+        <Route path="/admin/posts/edit/:id" element={
+          <ProtectedRoute>
+            <AdminLayout>
+              <PostEditor />
+            </AdminLayout>
+          </ProtectedRoute>
+        } />
+
+        <Route path="*" element={<Navigate to="/admin" replace />} />
       </Routes>
     </Router>
   );

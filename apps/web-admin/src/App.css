@@ -591,3 +591,231 @@ body {
 .btn-delete:hover {
   background: #fecaca;
 }
+/* 错误消息样式 */
+.error-message {
+  background: #fee2e2;
+  border: 1px solid #fecaca;
+  color: #dc2626;
+  padding: 0.75rem 1rem;
+  border-radius: 8px;
+  margin-bottom: 1rem;
+  font-size: 0.875rem;
+}
+
+/* 加载状态样式 */
+.loading-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 200px;
+}
+
+.loading-spinner {
+  color: #64748b;
+  font-size: 1rem;
+}
+
+.loading-posts {
+  text-align: center;
+  padding: 2rem;
+  color: #64748b;
+}
+
+/* 认证切换按钮样式 */
+.auth-switch {
+  text-align: center;
+  margin-top: 1rem;
+  padding-top: 1rem;
+  border-top: 1px solid #e2e8f0;
+}
+
+.auth-switch p {
+  color: #64748b;
+  margin: 0;
+}
+
+.switch-button {
+  background: none;
+  border: none;
+  color: #667eea;
+  cursor: pointer;
+  text-decoration: underline;
+  margin-left: 0.5rem;
+  font-size: inherit;
+}
+
+.switch-button:hover {
+  color: #5a67d8;
+}
+
+.switch-button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+/* Draft状态徽章样式 */
+.status-badge.draft {
+  background: #fef3c7;
+  color: #92400e;
+}
+/* Post Editor Styles */
+.editor-content {
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+}
+
+.editor-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 0;
+}
+
+.editor-actions {
+  display: flex;
+  gap: 1rem;
+  align-items: center;
+}
+
+.btn-secondary {
+  background: #64748b;
+  color: white;
+  border: none;
+  padding: 0.75rem 1.5rem;
+  border-radius: 8px;
+  cursor: pointer;
+  font-weight: 500;
+  transition: all 0.3s ease;
+}
+
+.btn-secondary:hover {
+  background: #475569;
+  transform: translateY(-2px);
+}
+
+.btn-draft {
+  background: #f59e0b;
+  color: white;
+  border: none;
+  padding: 0.75rem 1.5rem;
+  border-radius: 8px;
+  cursor: pointer;
+  font-weight: 500;
+  transition: all 0.3s ease;
+}
+
+.btn-draft:hover {
+  background: #d97706;
+  transform: translateY(-2px);
+}
+
+.btn-publish {
+  background: linear-gradient(135deg, #10b981, #059669);
+  color: white;
+  border: none;
+  padding: 0.75rem 1.5rem;
+  border-radius: 8px;
+  cursor: pointer;
+  font-weight: 500;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 15px rgba(16, 185, 129, 0.3);
+}
+
+.btn-publish:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(16, 185, 129, 0.4);
+}
+
+.editor-form {
+  background: white;
+  padding: 2rem;
+  border-radius: 16px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+  border: 1px solid #f1f5f9;
+}
+
+.title-input {
+  width: 100%;
+  padding: 1rem;
+  border: 2px solid #e2e8f0;
+  border-radius: 10px;
+  font-size: 1.5rem;
+  font-weight: 600;
+  transition: all 0.3s ease;
+  background: #f8fafc;
+  color: #1e293b; /* 添加深色字体 */
+}
+
+.title-input:focus {
+  outline: none;
+  border-color: #667eea;
+  background: white;
+  box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+  color: #1e293b; /* 确保聚焦时也是深色 */
+}
+
+.excerpt-textarea,
+.content-textarea {
+  width: 100%;
+  padding: 1rem;
+  border: 2px solid #e2e8f0;
+  border-radius: 10px;
+  font-size: 1rem;
+  font-family: inherit;
+  transition: all 0.3s ease;
+  background: #f8fafc;
+  resize: vertical;
+  color: #1e293b; /* 添加深色字体 */
+}
+
+.excerpt-textarea:focus,
+.content-textarea:focus {
+  outline: none;
+  border-color: #667eea;
+  background: white;
+  box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+  color: #1e293b; /* 确保聚焦时也是深色 */
+}
+
+.content-textarea {
+  min-height: 400px;
+  font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', monospace;
+  line-height: 1.6;
+}
+/* 确保占位符文字也是可见的 */
+.title-input::placeholder,
+.excerpt-textarea::placeholder,
+.content-textarea::placeholder {
+  color: #64748b; /* 使用中等灰色确保可读性 */
+  opacity: 1; /* 确保不透明度为1 */
+}
+/* 修复表单标签的颜色，确保它们也是可见的 */
+.editor-form .form-group label {
+  color: #374151; /* 使用深灰色 */
+  font-weight: 600;
+  margin-bottom: 0.5rem;
+  display: block;
+}
+.status-display {
+  padding: 1rem;
+  background: #f8fafc;
+  border-radius: 8px;
+  border: 1px solid #e2e8f0;
+  color: #1e293b; /* 添加深色字体 */
+}
+
+/* 按钮禁用状态 */
+.btn-secondary:disabled,
+.btn-draft:disabled,
+.btn-publish:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+  transform: none;
+}
+
+.btn-secondary:disabled:hover,
+.btn-draft:disabled:hover,
+.btn-publish:disabled:hover {
+  transform: none;
+}
