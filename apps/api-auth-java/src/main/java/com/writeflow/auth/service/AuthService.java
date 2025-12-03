@@ -54,11 +54,12 @@ public class AuthService {
     }
 
     public TokenPair login(LoginRequest request) {
+
         User user = userRepository.findByUsername(request.username())
-                .orElseThrow(() -> new IllegalArgumentException("아이디 또는 비밀번호가 올바르지 않습니다."));
+                .orElseThrow(() -> new IllegalArgumentException("아이디 또는 비밀번호가 올바르지 않습니다.1"));
 
         if (!passwordEncoder.matches(request.password(), user.getPassword())) {
-            throw new IllegalArgumentException("아이디 또는 비밀번호가 올바르지 않습니다.");
+            throw new IllegalArgumentException("아이디 또는 비밀번호가 올바르지 않습니다.2");
         }
 
         String access = jwtTokenProvider.createAccessToken(user.getId(), user.getUsername());
