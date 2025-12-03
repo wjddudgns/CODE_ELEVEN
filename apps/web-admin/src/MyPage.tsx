@@ -4,6 +4,7 @@ import { useUserStore } from "./store/user";
 import { apiGet } from "./lib/api";
 import "./MyPage.css";
 
+// 게시글 인터페이스
 interface Post {
   id: number;
   content: string;
@@ -16,10 +17,12 @@ interface Post {
   }>;
 }
 
+// 감정 통계 인터페이스
 interface EmotionStats {
   [key: string]: number;
 }
 
+// 마이페이지 컴포넌트
 export default function MyPage() {
   const navigate = useNavigate();
   const { user, isAuthenticated } = useUserStore();
@@ -28,6 +31,7 @@ export default function MyPage() {
   const [emotionStats, setEmotionStats] = useState<EmotionStats>({});
   const [totalPosts, setTotalPosts] = useState(0);
 
+  // 인증 상태 확인 및 데이터 로드
   useEffect(() => {
     if (!isAuthenticated || !user) {
       navigate("/login");
@@ -37,18 +41,19 @@ export default function MyPage() {
     fetchUserData();
   }, [isAuthenticated, user, navigate]);
 
+  // 사용자 데이터 가져오기
   const fetchUserData = async () => {
     try {
-      // For development: mock user posts
-      // Replace with real API when backend is ready
+      // 개발 환경: 모의 데이터 사용
       if (process.env.NODE_ENV === "development") {
+        // 네트워크 지연 모의
         await new Promise(resolve => setTimeout(resolve, 1000));
 
-        // Mock user posts data
+        // 모의 게시글 데이터
         const mockPosts: Post[] = [
           {
             id: 1,
-            content: "Today was a wonderful day! I felt so joyful and grateful for everything in my life.",
+            content: "오늘은 정말 멋진 날이었어요! 제 인생의 모든 것에 감사하게 느껴졌습니다.",
             emotion: "JOY",
             createdAt: new Date(Date.now() - 2 * 24 * 60 * 60 * 1000).toISOString(),
             buttons: [
@@ -58,7 +63,7 @@ export default function MyPage() {
           },
           {
             id: 2,
-            content: "Feeling a bit anxious about the upcoming project deadline.",
+            content: "다가오는 프로젝트 마감 때문에 조금 불안해요.",
             emotion: "SADNESS",
             createdAt: new Date(Date.now() - 5 * 24 * 60 * 60 * 1000).toISOString(),
             buttons: [
@@ -68,7 +73,7 @@ export default function MyPage() {
           },
           {
             id: 3,
-            content: "The sunset today was absolutely breathtaking!",
+            content: "오늘의 일몰은 정말 숨이 멎을 정도로 아름다웠어요!",
             emotion: "LOVE",
             createdAt: new Date(Date.now() - 7 * 24 * 60 * 60 * 1000).toISOString(),
             buttons: [
@@ -81,7 +86,7 @@ export default function MyPage() {
         setPosts(mockPosts);
         setTotalPosts(mockPosts.length);
 
-        // Calculate emotion statistics
+        // 감정 통계 계산
         const stats: EmotionStats = {};
         mockPosts.forEach((post) => {
           const emotion = post.emotion.toLowerCase();
@@ -93,12 +98,12 @@ export default function MyPage() {
         return;
       }
 
-      // Production: real API call
+      // 프로덕션: 실제 API 호출
       const userPosts = await apiGet(`/posts/me?userId=${user?.id}`);
       setPosts(userPosts.items || []);
       setTotalPosts(userPosts.totalElements || 0);
 
-      // Calculate emotion statistics
+      // 감정 통계 계산
       const stats: EmotionStats = {};
       (userPosts.items || []).forEach((post: Post) => {
         const emotion = post.emotion.toLowerCase();
@@ -106,12 +111,13 @@ export default function MyPage() {
       });
       setEmotionStats(stats);
     } catch (error) {
-      console.error("Error fetching user data:", error);
+      console.error("사용자 데이터 가져오기 오류:", error);
     } finally {
       setLoading(false);
     }
   };
 
+  // 감정 라벨 매핑
   const emotionLabels: { [key: string]: string } = {
     joy: "😊 기쁨",
     anger: "😠 분노",
@@ -122,6 +128,7 @@ export default function MyPage() {
     ambition: "🔥 야망",
   };
 
+  // 날짜 형식화
   const formatDate = (dateString: string) => {
     const date = new Date(dateString);
     return date.toLocaleDateString("ko-KR", {
@@ -130,11 +137,13 @@ export default function MyPage() {
     });
   };
 
+  // 내용 축약
   const truncateContent = (content: string, maxLength: number = 80) => {
     if (content.length <= maxLength) return content;
     return content.substring(0, maxLength) + "...";
   };
 
+  // 로딩 상태 표시
   if (loading) {
     return (
       <div className="loading-container">
@@ -146,33 +155,33 @@ export default function MyPage() {
   return (
     <div className="mypage-container">
       <div className="mypage-header">
-        <h1>My Dashboard</h1>
-        <p>Welcome back, {user?.nickname}!</p>
+        <h1>나의 대시보드</h1>
+        <p>다시 오신 것을 환영합니다, {user?.nickname}님!</p>
       </div>
 
-      {/* Stats Grid */}
+      {/* 통계 그리드 */}
       <div className="stats-grid">
         <div className="stat-card">
-          <h3>Total Posts</h3>
+          <h3>총 게시글</h3>
           <p className="stat-value">{totalPosts}</p>
         </div>
 
         <div className="stat-card">
-          <h3>Emotions Shared</h3>
+          <h3>공유한 감정</h3>
           <p className="stat-value">{Object.keys(emotionStats).length}</p>
         </div>
 
         <div className="stat-card">
-          <h3>Last Active</h3>
+          <h3>마지막 활동</h3>
           <p className="stat-value">
-            {posts.length > 0 ? formatDate(posts[0].createdAt) : "No posts yet"}
+            {posts.length > 0 ? formatDate(posts[0].createdAt) : "아직 게시글이 없습니다"}
           </p>
         </div>
       </div>
 
-      {/* Emotion Distribution */}
+      {/* 감정 분포 */}
       <div className="emotion-distribution">
-        <h2>Emotion Distribution</h2>
+        <h2>감정 분포</h2>
         <div className="emotion-tags">
           {Object.entries(emotionStats).map(([emotion, count]) => (
             <div
@@ -191,20 +200,20 @@ export default function MyPage() {
         </div>
       </div>
 
-      {/* Recent Posts */}
+      {/* 최근 게시글 */}
       <div className="recent-posts-section">
         <div className="section-header">
-          <h2>My Recent Posts</h2>
+          <h2>나의 최근 게시글</h2>
           <Link to="/write" className="new-post-button">
-            + Write New Post
+            + 새 글 쓰기
           </Link>
         </div>
 
         {posts.length === 0 ? (
           <div className="empty-state">
-            <p>You haven't written any posts yet.</p>
+            <p>아직 게시글을 작성하지 않으셨습니다.</p>
             <Link to="/write" className="new-post-button">
-              Start Writing
+              글쓰기 시작하기
             </Link>
           </div>
         ) : (
@@ -243,10 +252,10 @@ export default function MyPage() {
               <div style={{ textAlign: "center", marginTop: "20px" }}>
                 <button
                   className="auth-button"
-                  onClick={() => alert("View all posts feature coming soon!")}
+                  onClick={() => alert("모든 게시글 보기 기능은 준비 중입니다!")}
                   style={{ maxWidth: "200px" }}
                 >
-                  View All Posts ({posts.length})
+                  모든 게시글 보기 ({posts.length})
                 </button>
               </div>
             )}

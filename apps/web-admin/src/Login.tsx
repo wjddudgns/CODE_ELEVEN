@@ -4,6 +4,7 @@ import { AuthApi } from "./lib/authApi";
 import { useUserStore } from "./store/user";
 import "./Auth.css";
 
+// 로그인 페이지 컴포넌트
 export default function Login() {
   const navigate = useNavigate();
   const { login } = useUserStore();
@@ -14,6 +15,7 @@ export default function Login() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
 
+  // 입력 필드 변경 핸들러
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
     setFormData((prev) => ({
@@ -22,22 +24,24 @@ export default function Login() {
     }));
   };
 
+  // 로그인 제출 핸들러
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
     setError("");
 
     try {
+      // API를 통해 로그인 시도
       const response = await AuthApi.login({
         username: formData.username,
         password: formData.password,
       });
 
-      // Store tokens in localStorage
+      // 로컬 스토리지에 토큰 저장
       localStorage.setItem("accessToken", response.accessToken);
       localStorage.setItem("refreshToken", response.refreshToken);
 
-      // Update user store
+      // 사용자 상태 저장소 업데이트
       login({
         id: response.user.id,
         email: response.user.email,
@@ -47,10 +51,11 @@ export default function Login() {
         refreshToken: response.refreshToken,
       });
 
-      // Navigate to home page
+      // 홈 페이지로 이동
       navigate("/");
     } catch (err: any) {
-      setError(err.message || "Login failed. Please check your credentials.");
+      // 에러 메시지 설정
+      setError(err.message || "로그인에 실패했습니다. 자격 증명을 확인해주세요.");
     } finally {
       setLoading(false);
     }
@@ -60,8 +65,8 @@ export default function Login() {
     <div className="auth-page">
       <div className="auth-container">
         <div className="auth-header">
-          <h2>Login to WriteFlow</h2>
-          <p>Access your emotional journal</p>
+          <h2>WriteFlow 로그인</h2>
+          <p>당신의 감정 일기에 접속하세요</p>
         </div>
 
         {error && (
@@ -73,7 +78,7 @@ export default function Login() {
         <form onSubmit={handleSubmit} className="auth-form">
           <div className="form-group">
             <label htmlFor="username">
-              Username
+              사용자 이름
             </label>
             <input
               type="text"
@@ -82,13 +87,13 @@ export default function Login() {
               value={formData.username}
               onChange={handleChange}
               required
-              placeholder="Enter your username"
+              placeholder="사용자 이름을 입력하세요"
             />
           </div>
 
           <div className="form-group">
             <label htmlFor="password">
-              Password
+              비밀번호
             </label>
             <input
               type="password"
@@ -97,7 +102,7 @@ export default function Login() {
               value={formData.password}
               onChange={handleChange}
               required
-              placeholder="Enter your password"
+              placeholder="비밀번호를 입력하세요"
             />
           </div>
 
@@ -106,19 +111,19 @@ export default function Login() {
             className="auth-button"
             disabled={loading}
           >
-            {loading ? "Logging in..." : "Login"}
+            {loading ? "로그인 중..." : "로그인"}
           </button>
         </form>
 
         <div className="auth-switch">
           <p>
-            Don't have an account?{" "}
+            계정이 없으신가요?{" "}
             <button
               type="button"
               className="auth-switch-button"
               onClick={() => navigate("/signup")}
             >
-              Sign up
+              회원가입
             </button>
           </p>
         </div>

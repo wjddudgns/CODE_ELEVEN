@@ -1,4 +1,4 @@
-/* Auth.css - Separate styles for authentication pages */
+/* 로그인/회원가입 페이지 스타일 - 한글 최적화 */
 
 .auth-page {
   min-height: 100vh;
@@ -7,6 +7,7 @@
   justify-content: center;
   background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
   padding: 20px;
+  font-family: "Pretendard", "Noto Sans KR", -apple-system, sans-serif;
 }
 
 .auth-container {
@@ -34,11 +35,13 @@
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   margin-bottom: 0.5rem;
+  line-height: 1.3;
 }
 
 .auth-header p {
   color: var(--muted);
   font-size: 0.9rem;
+  line-height: 1.5;
 }
 
 .auth-form .form-group {
@@ -51,6 +54,7 @@
   font-weight: 600;
   color: var(--text);
   font-size: 0.9rem;
+  letter-spacing: -0.3px;
 }
 
 .auth-form input {
@@ -62,6 +66,8 @@
   transition: all 0.3s ease;
   background: var(--card-bg);
   color: var(--text);
+  font-family: inherit;
+  letter-spacing: -0.3px;
 }
 
 .auth-form input:focus {
@@ -73,6 +79,11 @@
 
 [data-theme="dark"] .auth-form input:focus {
   background: #2a2a2a;
+}
+
+.auth-form input::placeholder {
+  color: #94a3b8;
+  font-size: 0.95rem;
 }
 
 .auth-button {
@@ -87,6 +98,8 @@
   cursor: pointer;
   transition: all 0.3s ease;
   margin-top: 0.5rem;
+  font-family: inherit;
+  letter-spacing: -0.3px;
 }
 
 .auth-button:hover {
@@ -110,6 +123,8 @@
 .auth-switch p {
   color: var(--muted);
   margin: 0;
+  font-size: 0.9rem;
+  line-height: 1.5;
 }
 
 .auth-switch-button {
@@ -120,6 +135,9 @@
   text-decoration: underline;
   margin-left: 0.5rem;
   font-size: inherit;
+  font-weight: 500;
+  font-family: inherit;
+  padding: 0;
 }
 
 .auth-switch-button:hover {
@@ -134,6 +152,8 @@
   border-radius: 8px;
   margin-bottom: 1rem;
   font-size: 0.9rem;
+  line-height: 1.4;
+  font-family: inherit;
 }
 
 [data-theme="dark"] .error-message {
@@ -149,6 +169,8 @@
   border-radius: 8px;
   margin-bottom: 1rem;
   font-size: 0.9rem;
+  line-height: 1.4;
+  font-family: inherit;
 }
 
 [data-theme="dark"] .success-message {
@@ -167,5 +189,9 @@
 @media (max-width: 480px) {
   .auth-container {
     padding: 1.25rem;
+  }
+
+  .auth-header h2 {
+    font-size: 1.5rem;
   }
 }

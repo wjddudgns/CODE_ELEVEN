@@ -1,10 +1,12 @@
 import { apiPost } from "./api";
 
+// 로그인 요청 인터페이스
 export interface LoginRequest {
   username: string;
   password: string;
 }
 
+// 로그인 응답 인터페이스
 export interface LoginResponse {
   accessToken: string;
   refreshToken: string;
@@ -16,6 +18,7 @@ export interface LoginResponse {
   };
 }
 
+// 회원가입 요청 인터페이스
 export interface SignupRequest {
   email: string;
   username: string;
@@ -23,6 +26,7 @@ export interface SignupRequest {
   nickname: string;
 }
 
+// 회원가입 응답 인터페이스
 export interface SignupResponse {
   message: string;
   user: {
@@ -33,15 +37,16 @@ export interface SignupResponse {
   };
 }
 
+// 인증 API 함수들
 export const AuthApi = {
+  // 로그인 함수
   login: async (data: LoginRequest): Promise<LoginResponse> => {
-    // For development: mock response
-    // Replace with real API when backend is ready
+    // 개발 환경: 모의 응답
     if (process.env.NODE_ENV === "development") {
-      // Simulate network delay
+      // 네트워크 지연 모의
       await new Promise(resolve => setTimeout(resolve, 1000));
 
-      // Mock successful login for testing
+      // 테스트용 모의 로그인
       if (data.username === "test" && data.password === "password") {
         return {
           accessToken: "mock_access_token_" + Date.now(),
@@ -50,26 +55,27 @@ export const AuthApi = {
             id: "1",
             email: "test@example.com",
             username: "test",
-            nickname: "Test User"
+            nickname: "테스트 사용자"
           }
         };
       } else {
-        throw new Error("Invalid username or password");
+        throw new Error("잘못된 사용자 이름 또는 비밀번호입니다.");
       }
     }
 
-    // Production: real API call
+    // 프로덕션: 실제 API 호출
     return apiPost("/auth/login", data);
   },
 
+  // 회원가입 함수
   signup: async (data: SignupRequest): Promise<SignupResponse> => {
-    // For development: mock response
+    // 개발 환경: 모의 응답
     if (process.env.NODE_ENV === "development") {
       await new Promise(resolve => setTimeout(resolve, 1000));
 
-      // Mock successful registration
+      // 모의 회원가입 성공
       return {
-        message: "Registration successful",
+        message: "회원가입이 성공적으로 완료되었습니다.",
         user: {
           id: Date.now().toString(),
           email: data.email,
@@ -79,12 +85,13 @@ export const AuthApi = {
       };
     }
 
-    // Production: real API call
+    // 프로덕션: 실제 API 호출
     return apiPost("/auth/signup", data);
   },
 
+  // 토큰 갱신 함수
   refreshToken: async (token: string): Promise<{ accessToken: string; refreshToken: string }> => {
-    // For development: mock response
+    // 개발 환경: 모의 응답
     if (process.env.NODE_ENV === "development") {
       await new Promise(resolve => setTimeout(resolve, 500));
       return {
@@ -93,7 +100,7 @@ export const AuthApi = {
       };
     }
 
-    // Production: real API call
+    // 프로덕션: 실제 API 호출
     return apiPost("/auth/refresh", { token });
   },
 };
