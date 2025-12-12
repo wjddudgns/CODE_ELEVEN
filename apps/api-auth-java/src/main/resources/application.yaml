@@ -25,6 +25,20 @@ spring:
 server:
   port: ${PORT:8082}
 
+# ✅ Actuator 설정 (dev 프로필)
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info
+      base-path: /actuator
+  endpoint:
+    health:
+      show-details: always
+  health:
+    defaults:
+      enabled: true
+
 ---
 spring:
   config:
@@ -49,3 +63,16 @@ jwt:
   access-token-validity-ms: 1800000 #30min
   refresh-token-validity-ms: 604800000 #7day
 
+# ✅ Actuator 설정 (prod 프로필)
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info
+      base-path: /actuator
+  endpoint:
+    health:
+      show-details: when-authorized  # prod에서는 인증된 경우만 상세 정보 표시
+  health:
+    defaults:
+      enabled: true
