@@ -1,0 +1,129 @@
+
+
+services:
+  # 데이터베이스 (Postgres)
+  db:
+    image: postgres:16
+    container_name: writeflow-db
+    restart: unless-stopped
+    env_file:
+      - .env.prod
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB:-writeflow}
+      POSTGRES_USER: ${POSTGRES_USER:-writeflow}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-writeflow}
+    volumes:
+      - db-data:/var/lib/postgresql/data
+    networks:
+      - writeflow-net
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-writeflow} -d ${POSTGRES_DB:-writeflow}"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+      start_period: 10s
+
+  # Java 인증 서버 (api-auth-java)
+  api-auth-java:
+    build:
+      context: ./apps/api-auth-java
+      dockerfile: Dockerfile
+    container_name: api-auth-java
+    restart: unless-stopped
+    depends_on:
+      db:
+        condition: service_healthy
+    env_file:
+      - .env.prod
+    environment:
+      SPRING_PROFILES_ACTIVE: prod
+      DB_HOST: ${DB_HOST:-db}
+      DB_PORT: ${DB_PORT:-5432}
+      DB_NAME: ${DB_NAME:-writeflow}
+      DB_USER: ${DB_USER:-writeflow}
+      DB_PASSWORD: ${DB_PASSWORD:-writeflow}
+      JWT_SECRET: ${JWT_SECRET}
+    expose:
+      - "8082"
+    networks:
+      - writeflow-net
+    healthcheck:
+      test: ["CMD-SHELL", "curl -fsS http://localhost:8082/actuator/health || exit 1"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+      start_period: 40s
+
+  # Java 코어 서버 (api-core-java)
+  api-core-java:
+    build:
+      context: ./apps/api-core-java
+      dockerfile: Dockerfile
+    container_name: api-core-java
+    restart: unless-stopped
+    depends_on:
+      db:
+        condition: service_healthy
+    env_file:
+      - .env.prod
+    environment:
+      SPRING_PROFILES_ACTIVE: prod
+      DB_HOST: ${DB_HOST:-db}
+      DB_PORT: ${DB_PORT:-5432}
+      DB_NAME: ${DB_NAME:-writeflow}
+      DB_USER: ${DB_USER:-writeflow}
+      DB_PASSWORD: ${DB_PASSWORD:-writeflow}
+      JWT_SECRET: ${JWT_SECRET}
+    expose:
+      - "8081"
+    networks:
+      - writeflow-net
+    healthcheck:
+      test: ["CMD-SHELL", "curl -fsS http://localhost:8081/actuator/health || exit 1"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+      start_period: 40s
+
+  # Nginx 게이트웨이 (외부 80 포트 단독 담당)
+  gateway:
+    build:
+      context: ./gateway
+      dockerfile: Dockerfile
+    container_name: writeflow-gateway
+    restart: unless-stopped
+    depends_on:
+      api-auth-java:
+        condition: service_healthy
+      api-core-java:
+        condition: service_healthy
+      web:
+        condition: service_started
+    ports:
+      - "80:80"
+      - "8080:80"
+    networks:
+      - writeflow-net
+
+  # 웹 프론트엔드
+  web:
+    build:
+      context: ./apps/web
+      dockerfile: Dockerfile
+      # (선택) Vite/React가 빌드 시 API base를 필요로 하면 여기 build args로 주는 방식이 가장 안전함
+      # args:
+      #   VITE_API_BASE_URL: /api
+    container_name: writeflow-web
+    restart: unless-stopped
+    expose:
+      - "80"
+    networks:
+      - writeflow-net
+
+volumes:
+  db-data:
+
+networks:
+  writeflow-net:
+    driver: bridge
+
