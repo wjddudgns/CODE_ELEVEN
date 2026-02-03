@@ -28,6 +28,7 @@ public class PostService {
     private final PostReportRepository postReportRepository;
 
     // 글 작성
+  // 글 작성
     public PostResponse createPost(Long userId, PostCreateRequest req) {
         User author = userRepository.findById(userId)
                 .orElseThrow(() -> new IllegalArgumentException("사용자를 찾을 수 없습니다."));
@@ -36,30 +37,56 @@ public class PostService {
         Post post = new Post(author, req.content(), emotion);
         postRepository.save(post);
 
-        // 글 작성 시 활성화할 버튼 목록이 비어 있으면 예외
-        if (req.buttons() == null || req.buttons().isEmpty()) {
-            throw new IllegalArgumentException("최소 1개 이상의 버튼을 선택해야 합니다.");
+        // -----------------------------
+        // 🆕 버튼 이름 검증 및 정제
+        // -----------------------------
+        if (req.buttons() == null) {
+            throw new IllegalArgumentException("최소 1개 이상의 버튼을 입력해야 합니다.");
         }
 
-        // 요청으로 넘어온 버튼 문자열들을 Enum으로 변환 (한글/영문 모두 허용) + 중복 제거
-        List<ButtonType> buttonTypes = req.buttons().stream()
-                .map(ButtonType::from)
+        // null/공백 제거 + trim + 중복 제거
+        List<String> labels = req.buttons().stream()
+                .map(label -> label == null ? "" : label.trim())
+                .filter(label -> !label.isEmpty())
                 .distinct()
                 .toList();
 
-        // 선택된 버튼들에 대해서만 집계 row 생성
-        for (ButtonType type : buttonTypes) {
-            PostButtonStat stat = new PostButtonStat(post, type);
+        if (labels.isEmpty()) {
+            throw new IllegalArgumentException("최소 1개 이상의 버튼을 입력해야 합니다.");
+        }
+
+        if (labels.size() > 5) {
+            throw new IllegalArgumentException("버튼은 최대 5개까지 설정할 수 있습니다.");
+        }
+
+        //  각 이름 길이 제한
+        for (String label : labels) {
+            if (label.length() > 20) { // 필요하면 줄여도 됨
+                throw new IllegalArgumentException("버튼 이름은 20자 이내여야 합니다.");
+            }
+        }
+
+        // -----------------------------
+        // 🆕 내부 ButtonType과 매핑
+        // -----------------------------
+        ButtonType[] allTypes = ButtonType.values();
+        if (labels.size() > allTypes.length) {
+            // 이론상 labels는 5개까지만 오고, enum은 7개라서 걸릴 일은 없지만 안전장치
+            throw new IllegalArgumentException("사용 가능한 버튼 수를 초과했습니다.");
+        }
+
+        for (int i = 0; i < labels.size(); i++) {
+            ButtonType internalType = allTypes[i];   // EMPATHY, COMFORT, SAD, ...
+            String label = labels.get(i);            // 사용자가 입력한 실제 이름
+
+            PostButtonStat stat = new PostButtonStat(post, internalType, label);
             postButtonStatRepository.save(stat);
             post.addButtonStat(stat);
         }
 
-        // TODO: 여기서 LLM 호출 → post.setLlmReply(...) 후 저장하는 로직 연결 가능
-
         List<PostButtonStat> stats = postButtonStatRepository.findByPost(post);
         return PostResponse.from(post, stats);
     }
-
     // 글 단건 조회 (숨김 글이면 예외)
     @Transactional(readOnly = true)
     public PostResponse getPost(Long postId) {
@@ -256,3 +283,4 @@ public class PostService {
                 .toList();
     }
 }
+
